@@ -8,7 +8,7 @@
     "package": "rm -rf dist && vite build",
     "preview": "vite preview",
     "start": "electron .",
-    "build": "vite build && electron-builder"
+    "build": "rm -rf dist && vite build && electron-builder"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
@@ -48,7 +48,6 @@
   "build": {
     "appId": "com.yhyzgn.waper",
     "productName": "waper",
-    "compress": "store",
     "directories": {
       "output": "out"
     },
