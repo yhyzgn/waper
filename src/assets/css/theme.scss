@@ -1,0 +1,71 @@
+@charset "UTF-8";
+
+/* 字体主色 */
+$primaryColor: teal;
+//$primaryColor: #3eaf7c;
+
+$primaryColorDark: #2c3e50;
+
+$primaryAlphaColorDark: #2c3e5044;
+
+$shadowPrimaryColorDark: $primaryAlphaColorDark;
+
+$primaryShadow: 0 0 10px 2px $primaryColor;
+
+$primaryShadowDark: 0 0 10px 2px $shadowPrimaryColorDark;
+
+$primaryAlphaColor: #3eaf7c22;
+
+$blackAlphaColor: #00000066;
+
+/* placeholder 颜色*/
+$placeHolderColor: #adb0af;
+
+/* 背景主色 */
+$primaryBgColor: #f5fcff;
+
+/* 文字主题颜色 */
+$fontPrimaryColor: $primaryColorDark;
+
+$dangerColor: #fc5839;
+
+$dividerColor: #eaecef;
+
+/* ---------------------------------------------------------------------------------------------------- */
+/*
+  Element-Plus 主题定制
+ */
+$--colors: (
+        "primary": (
+                "base": $primaryColor,
+        ),
+        "success": (
+                "base": $primaryColor,
+        ),
+        "warning": (
+                "base": #f2711c,
+        ),
+        "danger": (
+                "base": $dangerColor,
+        ),
+        "error": (
+                "base": $dangerColor,
+        ),
+        "info": (
+                "base": $primaryColor,
+        ),
+);
+
+@forward "node_modules/element-plus/theme-chalk/src/common/var.scss" with (
+  // do not use same name, it will override.
+        $colors: $--colors,
+        $button-padding-horizontal: ("default": 18px)
+);
+
+// 以下问题已通过 vite-plugin-style-import 插件解决
+// 以下是自定义主题后可能有问题的组件主题，需要重新引入下
+//@import "node_modules/element-plus/theme-chalk/src/message.scss";
+//@import "node_modules/element-plus/theme-chalk/src/message-box.scss";
+
+// 全局引入将错误，且影响调试性能
+// @import "node_modules/element-plus/theme-chalk/src/index.scss";

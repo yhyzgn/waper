@@ -1,0 +1,22 @@
+{
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    // 生成相应的 .map文件。
+    "sourceMap": true,
+    // 解析非相对模块名的基准目录
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "~/*": [
+        "./src/assets/*"
+      ]
+    }
+  }
+}
