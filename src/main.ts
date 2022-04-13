@@ -19,4 +19,3 @@ for (let icon in ElIcon) {
 
 app
   .mount('#app')
-  .$nextTick(window['removeLoading'])
