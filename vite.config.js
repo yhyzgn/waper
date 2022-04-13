@@ -86,7 +86,7 @@ export default defineConfig({
     include: ['axios', 'element-plus', '@element-plus/icons-vue']
   },
   build: {
-    outDir: 'dist',
+    outDir: 'app/dist',
     minify: 'esbuild',
     emptyOutDir: false,
     rollupOptions: {

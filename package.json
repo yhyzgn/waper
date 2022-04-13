@@ -1,33 +1,35 @@
 {
   "name": "waper",
   "private": true,
-  "version": "0.0.0",
-  "main": "dist/electron/main/index.js",
+  "version": "1.0.0",
+  "email": "yhyzgn@gmail.com",
   "scripts": {
     "dev": "vite",
-    "package": "rm -rf dist && vite build",
+    "build": "rm -rf app/dist && vite build",
     "preview": "vite preview",
     "start": "electron .",
-    "build": "rm -rf dist && vite build && electron-builder"
+    "pkg": "electron-builder",
+    "pkg:win": "electron-builder --win",
+    "pkg:win:x64": "electron-builder --win --x64",
+    "pkg:mac": "electron-builder --mac",
+    "pkg:linux": "electron-builder --linux",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
     "axios": "^0.26.0",
-    "crypto-js": "^4.1.1",
     "element-plus": "^2.1.7",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.13",
     "qs": "^6.10.3",
     "vue": "^3.2.32",
-    "vue-emitter-bus": "^1.0.3",
-    "vue-ls-plus": "^1.0.0",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.1",
     "@vue/compiler-sfc": "^3.2.31",
     "consola": "^2.15.3",
-    "electron": "^19.0.0-alpha.1",
+    "electron": "^18.0.3",
     "electron-builder": "^23.0.3",
     "esbuild": "^0.14.36",
     "node-sass": "^7.0.1",
@@ -48,7 +50,9 @@
   "build": {
     "appId": "com.yhyzgn.waper",
     "productName": "waper",
+    "artifactName": "${productName}-${platform}-${arch}-${version}-${channel}.${ext}",
     "directories": {
+      "app": "./app",
       "output": "out"
     },
     "files": [
@@ -60,13 +64,21 @@
         {
           "target": "nsis",
           "arch": [
-            "x64"
+            "x64",
+            "arm64",
+            "ia32"
           ]
         }
       ]
     },
     "mac": {
-      "target": "dmg",
+      "target": {
+        "target": "dmg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      },
       "category": "public.app-category.utilities",
       "icon": "build/icons/icon.icns",
       "hardenedRuntime": true,
@@ -79,11 +91,16 @@
     },
     "linux": {
       "icon": "build/icons",
-      "target": [
-        "AppImage",
-        "rpm",
-        "deb"
-      ],
+      "target": {
+        "target": "deb",
+        "arch": [
+          "x64",
+          "arm64",
+          "ia32",
+          "armv7l"
+        ]
+      },
+      "maintainer": "yhyzgn@gmail.com",
       "desktop": {
         "StartupNotify": "false",
         "Encoding": "UTF-8",
@@ -119,12 +136,6 @@
     },
     "deb": {
       "priority": "optional"
-    },
-    "rpm": {
-      "fpm": [
-        "--before-install",
-        "installer/linux/before-install.tpl"
-      ]
     }
   }
 }

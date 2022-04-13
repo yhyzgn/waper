@@ -1,5 +1,12 @@
 import {join} from 'path'
-import {app, BrowserWindow, ipcMain, screen} from 'electron'
+import {app, BrowserWindow, ipcMain, protocol, screen} from 'electron'
+
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([
+  {scheme: 'app', privileges: {secure: true, standard: true}}
+])
+
+const isDevelopment = !app.isPackaged
 
 let loading: BrowserWindow
 let main: BrowserWindow
@@ -79,8 +86,8 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (main === null) {
-    showMainWindow()
+  if (BrowserWindow.getAllWindows().length === 0) {
+    main === null ? showMainWindow() : main.show()
   }
 })
 

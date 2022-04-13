@@ -6,7 +6,7 @@ export default defineConfig({
     entry: 'electron/main/index.ts',
     vite: {
       build: {
-        outDir: 'dist/electron/main'
+        outDir: 'app/dist/electron/main'
       }
     }
   },
@@ -15,7 +15,7 @@ export default defineConfig({
     input: join(__dirname, 'electron/preload/index.ts'),
     vite: {
       build: {
-        outDir: 'dist/electron/preload'
+        outDir: 'app/dist/electron/preload'
       }
     }
   },
