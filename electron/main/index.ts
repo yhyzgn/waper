@@ -10,7 +10,7 @@ function createWindow() {
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      preload: join(__dirname, '../electron-preload/index.js'),
+      preload: join(__dirname, '../preload/index.js'),
     },
   })
 
@@ -20,13 +20,13 @@ function createWindow() {
   })
 
   if (app.isPackaged) {
-    win.loadFile(join(__dirname, '../index.html')).then(r => {
-    })
+    win.loadFile(join(__dirname, '../../index.html')).then(r => {
+    }).catch(err => {})
   } else {
     // 🚧 Use ['ENV_NAME'] avoid vite:define plugin
     const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`
     win.loadURL(url).then(r => {
-    })
+    }).catch(err => {})
   }
 }
 

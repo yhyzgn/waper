@@ -11,10 +11,6 @@ import electron from 'vite-plugin-electron'
 import electronRenderer from 'vite-plugin-electron/renderer'
 import electronConfig from './vite-electron.config'
 
-const manualChunksExists = (id, module) => {
-  return id.toString().split('node_modules/')[1].split('/')[0].includes(module)
-}
-
 // https://github.com/vuejs/rfcs/pull/227
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -94,16 +90,7 @@ export default defineConfig({
     minify: 'esbuild',
     emptyOutDir: false,
     rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (manualChunksExists(id, 'element-plus')) {
-              return 'element-plus'
-            }
-            return 'vendor'
-          }
-        }
-      }
+      output: {}
     }
   },
   // https://github.com/vitejs/vite/issues/3369
