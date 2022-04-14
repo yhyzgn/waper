@@ -1,12 +1,7 @@
 import {join} from 'path'
-import {app, BrowserWindow, ipcMain, protocol, screen} from 'electron'
+import {app, BrowserWindow, ipcMain, screen} from 'electron'
 import * as fs from 'fs'
 import settings from './settings'
-
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  {scheme: 'app', privileges: {secure: true, standard: true}},
-])
 
 const title = `${app.getName()} ${app.getVersion()}`
 const homeDir = app.getPath('home')
