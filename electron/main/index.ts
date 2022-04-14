@@ -54,30 +54,39 @@ const showMainWindow = () => {
       contextIsolation: false,
     },
   })
-  loadFor(main)
 
   main.setMenuBarVisibility(false)
   main.setMenu(null)
 
+  let mainTitle = title
+
   ipcMain.on('menu-selected', (e, arg) => {
     // arg 为当前选中的菜单项
-    main.title = `${title} ${arg.name}`
+    mainTitle = `${title} ${arg.name}`
+    main.title = mainTitle
   })
 
   ipcMain.on('on-window-top', (e, arg) => {
     main.focus()
   })
 
-  main.on('closed', () => {
-    main = null
+  main.on('show', e => {
+    // 标题
+    main.title = mainTitle
+
+    // 开发者模式
+    main.webContents.openDevTools()
   })
+
+  main.on('closed', () => {
+    // main = null
+  })
+
+  loadFor(main)
 
   main.once('ready-to-show', () => {
     main.show()
-    // 标题
-    main.title = title
 
-    main.webContents.openDevTools()
     loading.hide()
     loading.close()
     loading = null
