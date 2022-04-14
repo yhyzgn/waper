@@ -19,11 +19,8 @@ const {appendLoading} = useLoading()
 
 domReady().then(() => {
   appendLoading()
-
-  // 倒计时模拟记载
-  setTimeout(() => {
-    ipcRenderer.send('loading-finished', {
-      msg: 'Loading finished.'
-    })
-  }, 800)
+  
+  ipcRenderer.send('on-loading-started', {
+    msg: 'Loading started.'
+  })
 })

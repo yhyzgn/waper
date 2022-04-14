@@ -1,5 +1,7 @@
 import {join} from 'path'
 import {app, BrowserWindow, ipcMain, protocol, screen} from 'electron'
+import * as fs from 'fs'
+import settings from './settings'
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -7,6 +9,9 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 const title = `${app.getName()} ${app.getVersion()}`
+const homeDir = app.getPath('home')
+const appHomePath = join(homeDir, '.waper')
+const settingsPath = join(appHomePath, 'settings.json')
 
 let loading: BrowserWindow
 let main: BrowserWindow
@@ -27,8 +32,11 @@ const showLoadingWindow = cb => {
   })
 
   // 加载 loading.html
-  loading.loadFile('../preload/loading.html').then(() => {
+  const promise = app.isPackaged ? loading.loadFile(join(__dirname, '../../loading.html')) : loading.loadFile(join(__dirname, '../../../../public/loading.html'))
+  promise.then(r => {
+    console.log('page loaded.')
   }).catch(err => {
+    console.error(err)
   })
 
   loading.setMenuBarVisibility(false)
@@ -47,6 +55,8 @@ const showMainWindow = () => {
     show: false,
     width: width,
     height: height,
+    minWidth: width,
+    minHeight: height,
     focusable: true,
     title: title,
     webPreferences: {
@@ -102,8 +112,37 @@ const loadFor = (win: BrowserWindow) => {
   })
 }
 
-ipcMain.on('loading-finished', (e, arg) => {
-  showMainWindow()
+ipcMain.on('read-settings', (e, arg) => {
+  fs.readFile(settingsPath, 'utf-8', (err, data) => {
+    if (err) {
+      e.sender.send('error', '配置文件读取失败' + err)
+      return
+    }
+    const settingsContent = JSON.parse(data)
+    e.sender.send('on-settings-read', settingsContent)
+  })
+})
+
+ipcMain.on('on-loading-started', (e, arg) => {
+  // 加载时检查本地配置文件是否存在，不存在则新建一个
+  if (fs.existsSync(settingsPath)) {
+    // 显示主窗口
+    showMainWindow()
+    return
+  }
+
+  if (!fs.existsSync(appHomePath)) {
+    fs.mkdirSync(appHomePath, {mode: 0o777})
+  }
+  // 说明配置文件不存在
+  fs.writeFile(settingsPath, JSON.stringify(settings), {encoding: 'utf-8', mode: 0o777}, wer => {
+    if (wer) {
+      loading.webContents.send('error', '配置文件创建出错啦')
+      return
+    }
+    // 显示主窗口
+    showMainWindow()
+  })
 })
 
 app.on('window-all-closed', () => {

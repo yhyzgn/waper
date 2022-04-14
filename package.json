@@ -1,10 +1,13 @@
 {
   "name": "waper",
-  "private": true,
   "version": "1.0.0",
-  "email": "yhyzgn@gmail.com",
+  "author": {
+    "name": "yhyzgn",
+    "email": "yhyzgn@gmail.com"
+  },
   "description": "wallpaper",
-  "license": "ISC",
+  "license": "MIT",
+  "copyright": "Copyright© yhyzgn",
   "scripts": {
     "dev": "vite",
     "rm": "rm -rf app/dist",

@@ -24,6 +24,7 @@ export function useLoading() {
           height: 33%;
           background-color: #008082;
           float: left;
+          border: none;
           -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
           animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
       }

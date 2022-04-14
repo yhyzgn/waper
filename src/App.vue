@@ -6,8 +6,14 @@
 
 <script setup>
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-</script>
+import {ipcRenderer} from 'electron'
+import {toast} from '@/toast'
 
+ipcRenderer.on('error', (e, arg) => {
+  console.error(arg)
+  toast.error(arg)
+})
+</script>
 <style lang="scss">
 * {
   box-sizing: inherit;
@@ -38,5 +44,14 @@ body {
     -khtml-user-select: none;
     user-select: none;
   }
+}
+</style>
+
+<style scoped lang="scss">
+::v-deep(.el-input__suffix-inner) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
