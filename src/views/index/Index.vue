@@ -9,9 +9,9 @@
 
         <div class="dv-menu">
           <el-menu
-              :default-active="active"
-              class="no-select"
-              @select="handleMenuSelected">
+            :default-active="active"
+            class="no-select"
+            @select="handleMenuSelected">
             <el-menu-item-group v-for="gp in menuGroup" :key="gp.name" :title="gp.name">
               <template v-for="menu in gp.menus" :key="menu.code">
                 <template v-if="!!menu.children && menu.children.length > 0">
@@ -86,6 +86,9 @@
 import {ipcRenderer} from 'electron'
 import {toast} from '@/toast'
 
+const route = useRoute()
+const router = useRouter()
+
 const menuGroup = ref([
   {
     name: '壁纸',
@@ -130,8 +133,8 @@ const menuGroup = ref([
 ])
 
 // 当前选中项
-const active = ref('wl-online')
-const router = useRouter()
+const activeOnStart = route.name
+const active = ref(activeOnStart)
 
 const handleMenuSelected = (index, indexPath, item, routerResult) => {
   const menu = findMenuByCode(index)
@@ -173,6 +176,9 @@ const updateMenuByRoute = () => {
   }
 
   active.value = menu.code
+
+  // 通知主窗口事件
+  ipcRenderer.send('menu-selected', Object.assign({}, menu))
 }
 
 onUpdated(() => {

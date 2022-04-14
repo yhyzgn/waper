@@ -19,6 +19,7 @@ const router = createRouter({
       name: 'index',
       path: '/',
       component: Index,
+      redirect: '/online',
       children: [
         {
           name: 'wl-online',

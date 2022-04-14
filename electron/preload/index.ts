@@ -16,6 +16,7 @@ function domReady(condition: DocumentReadyState[] = ['complete', 'interactive'])
 }
 
 const {appendLoading} = useLoading()
+
 domReady().then(() => {
   appendLoading()
 
@@ -24,5 +25,5 @@ domReady().then(() => {
     ipcRenderer.send('loading-finished', {
       msg: 'Loading finished.'
     })
-  }, 3000)
+  }, 800)
 })

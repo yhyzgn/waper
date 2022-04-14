@@ -25,7 +25,11 @@ const showLoadingWindow = cb => {
       preload: join(__dirname, '../preload/index.js'),
     },
   })
-  loadFor(loading)
+
+  // 加载 loading.html
+  loading.loadFile('../preload/loading.html').then(() => {
+  }).catch(err => {
+  })
 
   loading.setMenuBarVisibility(false)
   loading.setMenu(null)
