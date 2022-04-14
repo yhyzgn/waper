@@ -1,10 +1,12 @@
 @charset "UTF-8";
 
 /* 字体主色 */
-$primaryColor: teal;
-//$primaryColor: #3eaf7c;
+//$primaryColor: teal;
+$primaryColor: #008082;
 
-$primaryColorDark: #2c3e50;
+$primaryAccent: #04737425;
+
+$primaryColorDark: #006a6b;
 
 $primaryAlphaColorDark: #2c3e5044;
 
@@ -16,7 +18,7 @@ $primaryShadowDark: 0 0 10px 2px $shadowPrimaryColorDark;
 
 $primaryAlphaColor: #3eaf7c22;
 
-$blackAlphaColor: #00000066;
+$blackAlphaColor: #9d9d9d44;
 
 /* placeholder 颜色*/
 $placeHolderColor: #adb0af;
@@ -25,7 +27,7 @@ $placeHolderColor: #adb0af;
 $primaryBgColor: #f5fcff;
 
 /* 文字主题颜色 */
-$fontPrimaryColor: $primaryColorDark;
+$fontPrimaryColor: #363636;
 
 $dangerColor: #fc5839;
 

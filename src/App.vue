@@ -32,5 +32,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
   }
+
+  .no-select {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+  }
 }
 </style>
