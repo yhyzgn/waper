@@ -3,15 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "email": "yhyzgn@gmail.com",
-  "main": "dist/electron/main/index.js",
-  "dependencies": {
-    "@element-plus/icons-vue": "^1.1.4",
-    "axios": "^0.26.0",
-    "element-plus": "^2.1.7",
-    "nprogress": "^0.2.0",
-    "pinia": "^2.0.13",
-    "qs": "^6.10.3",
-    "vue": "^3.2.32",
-    "vue-router": "^4.0.12"
-  }
+  "description": "wallpaper",
+  "license": "ISC",
+  "main": "dist/electron/main/index.js"
 }

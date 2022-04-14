@@ -3,16 +3,23 @@
   "private": true,
   "version": "1.0.0",
   "email": "yhyzgn@gmail.com",
+  "description": "wallpaper",
+  "license": "ISC",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf app/dist && vite build",
+    "rm": "rm -rf app/dist",
+    "build": "vite build",
     "preview": "vite preview",
     "start": "electron .",
-    "pkg": "electron-builder",
-    "pkg:win": "electron-builder --win",
-    "pkg:win:x64": "electron-builder --win --x64",
-    "pkg:mac": "electron-builder --mac",
-    "pkg:linux": "electron-builder --linux",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder",
+    "pkg": "electron-builder -p never",
+    "pkg:win": "electron-builder -w -p never",
+    "pkg:win:x86": "electron-builder -w --ia32 -p never",
+    "pkg:win:x64": "electron-builder -w --x64 -p never",
+    "pkg:mac": "electron-builder -m -p never",
+    "pkg:linux": "electron-builder -l -p never",
+    "pkg:mwl": "electron-builder -mwl -p never",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
@@ -50,7 +57,8 @@
   "build": {
     "appId": "com.yhyzgn.waper",
     "productName": "waper",
-    "artifactName": "${productName}-${platform}-${arch}-${version}-${channel}.${ext}",
+    "artifactName": "${productName}-${os}-${arch}-${version}-${channel}.${ext}",
+    "compression": "maximum",
     "directories": {
       "app": "./app",
       "output": "out"
@@ -65,8 +73,8 @@
           "target": "nsis",
           "arch": [
             "x64",
-            "arm64",
-            "ia32"
+            "ia32",
+            "arm64"
           ]
         }
       ]
@@ -100,6 +108,7 @@
           "armv7l"
         ]
       },
+      "compression": "maximum",
       "maintainer": "yhyzgn@gmail.com",
       "desktop": {
         "StartupNotify": "false",
