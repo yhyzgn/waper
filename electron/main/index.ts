@@ -4,9 +4,13 @@ import * as fs from 'fs'
 import settings from './settings'
 
 const title = `${app.getName()} ${app.getVersion()}`
+
 const homeDir = app.getPath('home')
+const exeDir = process.cwd()
 const appHomePath = join(homeDir, '.waper')
-const settingsPath = join(appHomePath, 'settings.json')
+
+const localStateDir = join(exeDir, 'localState')
+const settingsPath = join(localStateDir, 'settings.json')
 
 let loading: BrowserWindow
 let main: BrowserWindow
@@ -134,8 +138,8 @@ ipcMain.on('on-loading-started', (e, arg) => {
 })
 
 const writeSettings = sets => {
-  if (!fs.existsSync(appHomePath)) {
-    fs.mkdirSync(appHomePath, {mode: 0o777})
+  if (!fs.existsSync(localStateDir)) {
+    fs.mkdirSync(localStateDir, {mode: 0o777})
   }
 
   // 说明配置文件不存在

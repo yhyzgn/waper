@@ -17,5 +17,4 @@ for (let icon in ElIcon) {
   app.component(ElIcon[icon].name, ElIcon[icon])
 }
 
-app
-  .mount('#app')
+app.mount('#app')
