@@ -34,9 +34,10 @@
           <el-input
             v-model="mdlKeyword"
             class="tag-grp-ops tag-ipt"
-            placeholder="Search...">
+            placeholder="Search..."
+            @keyup.enter.native="handleSearch">
             <template #suffix>
-              <icon name="Search" class="icn-search" @click="handleSearch"/>
+              <el-button icon="Search" :loading="searching" @click="handleSearch"/>
             </template>
           </el-input>
         </div>
@@ -155,12 +156,13 @@ if (settings && settings.apiKey) {
   purities.push(purityNsfw)
 }
 
-let mdlCategory = $ref([])
-let mdlPurity = $ref([])
+let mdlCategory = $ref(['general'])
+let mdlPurity = $ref(['sfw', 'sketchy'])
 let mdlResolution = $ref('0')
 let mdlSort = $ref('date_added')
 let mdlKeyword = $ref('')
 let total = $ref(0)
+let searching = $ref(true)
 
 const refImgContainer = $ref(null)
 
@@ -180,9 +182,25 @@ const loadPage = () => {
   search()
 }
 
+const transformOptions = (options, checked, destLength) => {
+  const result = options.map(opt => checked.indexOf(opt.code) > -1 ? 1 : 0)
+  // 自动填充 0 到末尾
+  if (destLength && destLength > 0 && options.length < destLength && result.length < destLength) {
+    result.push(...Array(destLength - result.length).fill(0))
+  }
+  return result.join('')
+}
+
 const search = () => {
+  searching = true
+
   const params = {
     page: page,
+    categories: transformOptions(categories, mdlCategory),
+    purity: transformOptions(purities, mdlPurity, 3),
+    atleast: mdlResolution !== '0' || undefined,
+    sorting: mdlSort,
+    q: mdlKeyword,
   }
 
   // 当加载第一页后需要立刻把第二页的数据也准备一下
@@ -193,14 +211,19 @@ const search = () => {
       papers.splice(0, papers.length)
       papers.push(...data.data)
 
+      scrollToTop()
+
       // 把第 2 页的数据准备一下
       prepareNextPage(params)
     }).catch(err => {
       toast.error(err)
+    }).finally(() => {
+      searching = false
     })
   } else {
     // 直接从已准备好的数据中取得
     papers.push(...preparedPapers)
+    searching = false
 
     // 然后每次都把下一页的再准备好
     prepareNextPage(params)
@@ -221,6 +244,13 @@ const prepareNextPage = params => {
 
 const init = async () => {
   await search()
+}
+
+const scrollToTop = () => {
+  if (refImgContainer.scrollTop) {
+    window.requestAnimationFrame(scrollToTop)
+    refImgContainer.scrollTo(0, 0)
+  }
 }
 
 init()

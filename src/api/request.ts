@@ -1,4 +1,5 @@
 import qs from 'qs'
+import {useSettings} from '@/store'
 
 // @ts-ignore
 const baseApi: string = import.meta.env.VITE_APP_API_HOST || ''
@@ -36,7 +37,7 @@ const get = (url, params): Promise<any> => {
 const request = (url, config): Promise<any> => {
   // 合并配置项，不要去更改 initialConfig 中的内容
   // 确保 config 肯定是对象
-  (config == null || typeof config !== 'object') ? config = {} : null
+  config = (config == null || typeof config !== 'object') ? {} : config
   if (config.headers && isPlainObject(config.headers)) {
     config.headers = Object.assign({}, initialConfig.headers, config.headers)
   }
@@ -91,6 +92,13 @@ const request = (url, config): Promise<any> => {
     credentials,
     cache,
     headers,
+  }
+
+  // 动态请求头
+  const storeSettings = useSettings()
+  const settings = storeSettings.settings
+  if (settings && settings.apiKey) {
+    config.headers['X-API-Key'] = settings.apiKey
   }
 
   config.body = /^(POST|PUT|PATCH)$/i.test(method) ? body : null

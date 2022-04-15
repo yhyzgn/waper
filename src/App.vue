@@ -23,6 +23,7 @@ ipcRenderer.on('error', (e, arg) => {
   box-sizing: inherit;
   padding: 0;
   margin: 0;
+  // scroll-behavior: smooth;
 }
 
 // 自定义进度条颜色
@@ -78,6 +79,10 @@ body {
 </style>
 
 <style scoped lang="scss">
+::v-deep(.el-input__suffix) {
+  right: 0;
+}
+
 ::v-deep(.el-input__suffix-inner) {
   display: flex;
   flex-direction: column;
