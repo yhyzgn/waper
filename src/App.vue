@@ -49,6 +49,32 @@ body {
     user-select: none;
   }
 }
+
+/* 滚动条整体样式 */
+::-webkit-scrollbar {
+  width: 8px; /* 竖向滚动条的宽度 */
+  height: 8px; /* 横向滚动条的高度 */
+}
+
+/* 滚动条轨道的样式 */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 2px;
+}
+
+/* 滚动条里面的小方块 */
+::-webkit-scrollbar-thumb {
+  background: $primaryAccent;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $primaryColor;
+}
+
+::-webkit-scrollbar-corner {
+  background: $blackAlphaColor;
+}
 </style>
 
 <style scoped lang="scss">

@@ -17,24 +17,24 @@
 
           <el-select v-model="mdlResolution" class="tag-grp-ops tag-select" placeholder="分辨率">
             <el-option
-                v-for="rls in resolutions"
-                :key="rls.code"
-                :label="rls.label"
-                :value="rls.code"/>
+              v-for="rls in resolutions"
+              :key="rls.code"
+              :label="rls.label"
+              :value="rls.code"/>
           </el-select>
 
           <el-select v-model="mdlSort" class="tag-grp-ops tag-select" placeholder="排序">
             <el-option
-                v-for="st in sorts"
-                :key="st.code"
-                :label="st.label"
-                :value="st.code"/>
+              v-for="st in sorts"
+              :key="st.code"
+              :label="st.label"
+              :value="st.code"/>
           </el-select>
 
           <el-input
-              v-model="mdlKeyword"
-              class="tag-grp-ops tag-ipt"
-              placeholder="Search...">
+            v-model="mdlKeyword"
+            class="tag-grp-ops tag-ipt"
+            placeholder="Search...">
             <template #suffix>
               <icon name="Search" class="icn-search" @click="handleSearch"/>
             </template>
@@ -45,13 +45,13 @@
       </div>
     </div>
 
-    <div class="dv-online-main-container" v-infinite-scroll="nextPage" infinite-scroll-delay="1000" infinite-scroll-distance="200">
-      <paper class="pp-item" v-for="pp in papers" :key="pp.id" :src="pp.thumbs.large"/>
+    <div class="dv-online-main-container" ref="refImgContainer" v-infinite-scroll="loadPage" infinite-scroll-delay="600" infinite-scroll-distance="100">
+      <paper class="pp-item" v-for="pp in papers" :key="pp.id"
+             :src="pp.thumbs.small"
+             :resolution="pp.resolution"
+             :size="pp.file_size"
+             :scrollContainer="refImgContainer"/>
     </div>
-
-    <!--    <el-scrollbar tag="div" class="dv-online-main-container" style="height: 100vh;" :native="true">-->
-    <!--      <paper class="pp-item" v-for="pp in papers" :key="pp.id" :src="pp.thumbs.large"/>-->
-    <!--    </el-scrollbar>-->
   </div>
 </template>
 
@@ -62,94 +62,94 @@ import {get} from '@/api/request'
 
 // 加载配置文件信息
 const storeSettings = useSettings()
+const settings = storeSettings.settings
 
+// nsfw
 const purityNsfw = {
   code: 'nsfw',
-  label: 'NSFW'
+  label: 'NSFW',
 }
 
 const categories = [
   {
     code: 'general',
-    label: '常用'
+    label: '常用',
   },
   {
     code: 'anime',
-    label: '动漫'
+    label: '动漫',
   },
   {
     code: 'people',
-    label: '人物'
-  }
+    label: '人物',
+  },
 ]
 const purities = $ref([
   {
     code: 'sfw',
-    label: 'SFW'
+    label: 'SFW',
   },
   {
     code: 'sketchy',
-    label: 'Sketchy'
-  }
+    label: 'Sketchy',
+  },
 ])
 const resolutions = [
   {
     code: '0',
-    label: '不限'
+    label: '不限',
   },
   {
     code: '1280x720',
-    label: '720+'
+    label: '720+',
   },
   {
     code: '1920x1080',
-    label: '1080+'
+    label: '1080+',
   },
   {
     code: '2560x1080',
-    label: '2K+'
+    label: '2K+',
   },
   {
     code: '3840x2160',
-    label: '4k+'
+    label: '4k+',
   },
   {
     code: '7680x4320',
-    label: '4K+'
-  }
+    label: '4K+',
+  },
 ]
 const sorts = [
   {
     code: 'date_added',
-    label: '最新'
+    label: '最新',
   },
   {
     code: 'relevance',
-    label: '相关度'
+    label: '相关度',
   },
   {
     code: 'random',
-    label: '随机'
+    label: '随机',
   },
   {
     code: 'views',
-    label: '浏览数'
+    label: '浏览数',
   },
   {
     code: 'favorites',
-    label: '收藏数'
+    label: '收藏数',
   },
   {
     code: 'hot',
-    label: '热度'
+    label: '热度',
   },
   {
     code: 'toplist',
-    label: '热门列表'
-  }
+    label: '热门列表',
+  },
 ]
-
-const settings = storeSettings.settings
 
 if (settings && settings.apiKey) {
   purities.push(purityNsfw)
@@ -162,30 +162,58 @@ let mdlSort = $ref('date_added')
 let mdlKeyword = $ref('')
 let total = $ref(0)
 
+const refImgContainer = $ref(null)
+
 let page = $ref(1)
 let papers = $ref([])
 
+// 下一页的数据暂存
+let preparedPapers = []
+
 const handleSearch = () => {
   page = 1
-  search(true)
+  search()
 }
 
-const nextPage = () => {
+const loadPage = () => {
   page++
-  search(false)
+  search()
 }
 
-const search = shouldClear => {
+const search = () => {
   const params = {
-    page: page
+    page: page,
   }
 
-  get('/search', params).then(data => {
-    total = data.meta.total
-    if (shouldClear) {
+  // 当加载第一页后需要立刻把第二页的数据也准备一下
+  // 当 page >= 2 时，只从 preparedPapers 中获取数据，然后再把下一页的准备好
+  if (page === 1) {
+    get('/search', params).then(data => {
+      total = data.meta.total
       papers.splice(0, papers.length)
-    }
-    papers.push(...data.data)
+      papers.push(...data.data)
+
+      // 把第 2 页的数据准备一下
+      prepareNextPage(params)
+    }).catch(err => {
+      toast.error(err)
+    })
+  } else {
+    // 直接从已准备好的数据中取得
+    papers.push(...preparedPapers)
+
+    // 然后每次都把下一页的再准备好
+    prepareNextPage(params)
+  }
+}
+
+const prepareNextPage = params => {
+  // 下一页
+  params.page++
+
+  preparedPapers = []
+  get('/search', params).then(data => {
+    preparedPapers = data.data
   }).catch(err => {
     toast.error(err)
   })
@@ -245,15 +273,13 @@ init()
 
   .dv-online-main-container {
     padding: 12px 16px;
-
     display: inline-grid;
     grid-template-columns: repeat(4, 1fr);
     column-gap: 12px;
     row-gap: 12px;
     justify-items: start;
     align-items: start;
-
-    overflow-y: auto;
+    overflow: auto;
 
     .pp-item {
     }
