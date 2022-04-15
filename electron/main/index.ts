@@ -26,6 +26,8 @@ const showLoadingWindow = cb => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
+      allowRunningInsecureContent: true,
       preload: join(__dirname, '../preload/index.js'),
     },
   })
@@ -61,6 +63,8 @@ const showMainWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
+      allowRunningInsecureContent: true,
     },
   })
 

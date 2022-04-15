@@ -47,6 +47,7 @@
 
 <script setup>
 import {useSettings} from '@/store'
+import {toast} from '@/toast'
 
 // 加载配置文件信息
 const storeSettings = useSettings()
@@ -151,8 +152,17 @@ const mdlKeyword = ref('')
 const total = ref(0)
 
 const handleSearch = () => {
-  settings.apiKey = 'fbfbhGpJ3BYj9RHMWmFtSMXvphzp2ofK'
-  storeSettings.save(settings)
+  // settings.apiKey = 'fbfbhGpJ3BYj9RHMWmFtSMXvphzp2ofK'
+  // storeSettings.save(settings)
+
+  fetch('https://wallhaven.cc/api/v1/search', {
+    method: 'get',
+    headers: {'Content-type': 'application/json'}
+  }).then(data => {
+    console.log(data)
+  }).catch(err => {
+    toast.error(err)
+  })
 }
 </script>
 
