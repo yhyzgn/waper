@@ -199,8 +199,8 @@ onMounted(() => {
     height: 100vh;
 
     .el-aside {
-      width: 20%;
-      min-width: 240px;
+      width: 14%;
+      min-width: 220px;
       border-right: 1px solid $dividerColor;
 
       .el-menu {

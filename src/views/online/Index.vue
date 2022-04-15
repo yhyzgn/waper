@@ -1,47 +1,57 @@
 <template>
-  <div class="dv-header-container">
-    <div class="dv-header-content">
-      <div class="dv-ops">
-        <el-checkbox-group class="tag-grp-ops" v-model="mdlCategory">
-          <el-checkbox-button v-for="ctg in categories" :key="ctg.code" :label="ctg.code">
-            {{ ctg.label }}
-          </el-checkbox-button>
-        </el-checkbox-group>
+  <div class="dv-online-container">
+    <div class="dv-header-container">
+      <div class="dv-header-content">
+        <div class="dv-ops">
+          <el-checkbox-group class="tag-grp-ops" v-model="mdlCategory">
+            <el-checkbox-button v-for="ctg in categories" :key="ctg.code" :label="ctg.code">
+              {{ ctg.label }}
+            </el-checkbox-button>
+          </el-checkbox-group>
 
-        <el-checkbox-group class="tag-grp-ops" v-model="mdlPurity">
-          <el-checkbox-button v-for="prt in purities" :key="prt.code" :label="prt.code">
-            {{ prt.label }}
-          </el-checkbox-button>
-        </el-checkbox-group>
+          <el-checkbox-group class="tag-grp-ops" v-model="mdlPurity">
+            <el-checkbox-button v-for="prt in purities" :key="prt.code" :label="prt.code">
+              {{ prt.label }}
+            </el-checkbox-button>
+          </el-checkbox-group>
 
-        <el-select v-model="mdlResolution" class="tag-grp-ops tag-select" placeholder="分辨率">
-          <el-option
-              v-for="rls in resolutions"
-              :key="rls.code"
-              :label="rls.label"
-              :value="rls.code"/>
-        </el-select>
+          <el-select v-model="mdlResolution" class="tag-grp-ops tag-select" placeholder="分辨率">
+            <el-option
+                v-for="rls in resolutions"
+                :key="rls.code"
+                :label="rls.label"
+                :value="rls.code"/>
+          </el-select>
 
-        <el-select v-model="mdlSort" class="tag-grp-ops tag-select" placeholder="排序">
-          <el-option
-              v-for="st in sorts"
-              :key="st.code"
-              :label="st.label"
-              :value="st.code"/>
-        </el-select>
+          <el-select v-model="mdlSort" class="tag-grp-ops tag-select" placeholder="排序">
+            <el-option
+                v-for="st in sorts"
+                :key="st.code"
+                :label="st.label"
+                :value="st.code"/>
+          </el-select>
 
-        <el-input
-            v-model="mdlKeyword"
-            class="tag-grp-ops tag-ipt"
-            placeholder="Search...">
-          <template #suffix>
-            <icon name="Search" class="icn-search" @click="handleSearch"/>
-          </template>
-        </el-input>
+          <el-input
+              v-model="mdlKeyword"
+              class="tag-grp-ops tag-ipt"
+              placeholder="Search...">
+            <template #suffix>
+              <icon name="Search" class="icn-search" @click="handleSearch"/>
+            </template>
+          </el-input>
+        </div>
+
+        <div class="dv-count">共 {{ total }} 张</div>
       </div>
-
-      <div class="dv-count">共 {{ total }} 张</div>
     </div>
+
+    <div class="dv-online-main-container" v-infinite-scroll="nextPage" infinite-scroll-delay="1000" infinite-scroll-distance="200">
+      <paper class="pp-item" v-for="pp in papers" :key="pp.id" :src="pp.thumbs.large"/>
+    </div>
+
+    <!--    <el-scrollbar tag="div" class="dv-online-main-container" style="height: 100vh;" :native="true">-->
+    <!--      <paper class="pp-item" v-for="pp in papers" :key="pp.id" :src="pp.thumbs.large"/>-->
+    <!--    </el-scrollbar>-->
   </div>
 </template>
 
@@ -152,15 +162,30 @@ let mdlSort = $ref('date_added')
 let mdlKeyword = $ref('')
 let total = $ref(0)
 
-const handleSearch = () => {
+let page = $ref(1)
+let papers = $ref([])
 
+const handleSearch = () => {
+  page = 1
+  search(true)
 }
 
-const search = () => {
-  const params = {}
+const nextPage = () => {
+  page++
+  search(false)
+}
+
+const search = shouldClear => {
+  const params = {
+    page: page
+  }
 
   get('/search', params).then(data => {
     total = data.meta.total
+    if (shouldClear) {
+      papers.splice(0, papers.length)
+    }
+    papers.push(...data.data)
   }).catch(err => {
     toast.error(err)
   })
@@ -174,41 +199,63 @@ init()
 </script>
 
 <style scoped lang="scss">
-.dv-header-container {
-  padding: 40px 16px 12px;
-  border-bottom: 1px solid $dividerColor;
+.dv-online-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 
-  .dv-header-content {
-    display: flex;
-    flex-direction: row;
+  .dv-header-container {
+    padding: 40px 16px 12px;
+    border-bottom: 1px solid $dividerColor;
 
-    .dv-ops {
-      flex: 1;
-      display: inline-flex;
+    .dv-header-content {
+      display: flex;
+      flex-direction: row;
 
-      .tag-grp-ops + .tag-grp-ops {
-        margin-left: 12px;
-      }
+      .dv-ops {
+        flex: 1;
+        display: inline-flex;
 
-      .tag-select {
-        width: 100px;
-      }
+        .tag-grp-ops + .tag-grp-ops {
+          margin-left: 12px;
+        }
 
-      .tag-ipt {
-        width: 300px;
+        .tag-select {
+          width: 100px;
+        }
 
-        .icn-search:hover {
-          cursor: pointer;
+        .tag-ipt {
+          width: 300px;
+
+          .icn-search:hover {
+            cursor: pointer;
+          }
         }
       }
-    }
 
-    .dv-count {
-      font-size: .76em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      .dv-count {
+        font-size: .76em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .dv-online-main-container {
+    padding: 12px 16px;
+
+    display: inline-grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 12px;
+    row-gap: 12px;
+    justify-items: start;
+    align-items: start;
+
+    overflow-y: auto;
+
+    .pp-item {
     }
   }
 }
