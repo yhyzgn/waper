@@ -48,6 +48,7 @@
 <script setup>
 import {useSettings} from '@/store'
 import {toast} from '@/toast'
+import {get} from '@/api/request'
 
 // 加载配置文件信息
 const storeSettings = useSettings()
@@ -71,7 +72,7 @@ const categories = [
     label: '人物'
   }
 ]
-const purities = ref([
+const purities = $ref([
   {
     code: 'sfw',
     label: 'SFW'
@@ -141,29 +142,35 @@ const sorts = [
 const settings = storeSettings.settings
 
 if (settings && settings.apiKey) {
-  purities.value.push(purityNsfw)
+  purities.push(purityNsfw)
 }
 
-const mdlCategory = ref([])
-const mdlPurity = ref([])
-const mdlResolution = ref('0')
-const mdlSort = ref('date_added')
-const mdlKeyword = ref('')
-const total = ref(0)
+let mdlCategory = $ref([])
+let mdlPurity = $ref([])
+let mdlResolution = $ref('0')
+let mdlSort = $ref('date_added')
+let mdlKeyword = $ref('')
+let total = $ref(0)
 
 const handleSearch = () => {
-  // settings.apiKey = 'fbfbhGpJ3BYj9RHMWmFtSMXvphzp2ofK'
-  // storeSettings.save(settings)
 
-  fetch('https://wallhaven.cc/api/v1/search', {
-    method: 'get',
-    headers: {'Content-type': 'application/json'}
-  }).then(data => {
-    console.log(data)
+}
+
+const search = () => {
+  const params = {}
+
+  get('/search', params).then(data => {
+    total = data.meta.total
   }).catch(err => {
     toast.error(err)
   })
 }
+
+const init = async () => {
+  await search()
+}
+
+init()
 </script>
 
 <style scoped lang="scss">

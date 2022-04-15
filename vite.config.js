@@ -15,7 +15,10 @@ import electronConfig from './vite-electron.config'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      refTransform: true,
+      reactivityTransform: true
+    }),
     AutoImport({
       imports: ['vue', 'vue-router', 'pinia'],
       // 配置文件生成位置
@@ -64,7 +67,7 @@ export default defineConfig({
       ]
     }),
     electron(electronConfig),
-    electronRenderer(),
+    electronRenderer()
   ],
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.json', '.sass', '.scss', '.less'],
@@ -83,7 +86,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['axios', 'element-plus', '@element-plus/icons-vue']
+    include: ['element-plus', '@element-plus/icons-vue']
   },
   build: {
     outDir: 'app/dist',
