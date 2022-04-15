@@ -112,14 +112,9 @@ const loadFor = (win: BrowserWindow) => {
 }
 
 ipcMain.on('read-settings', (e, arg) => {
-  fs.readFile(settingsPath, 'utf-8', (err, data) => {
-    if (err) {
-      e.sender.send('error', '配置文件读取失败' + err)
-      return
-    }
-    const settingsContent = JSON.parse(data)
-    e.sender.send('on-settings-read', settingsContent)
-  })
+  const data = fs.readFileSync(settingsPath, 'utf-8')
+  const settingsContent = JSON.parse(data)
+  e.sender.send('on-settings-read', settingsContent)
 })
 
 ipcMain.on('write-settings', (e, arg) => {

@@ -8,9 +8,13 @@
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import {ipcRenderer} from 'electron'
 import {toast} from '@/toast'
+import {useSettings} from '@/store'
+
+// 加载配置文件信息
+const storeSettings = useSettings()
+console.log('Settings loaded: ', storeSettings.settings)
 
 ipcRenderer.on('error', (e, arg) => {
-  console.error(arg)
   toast.error(arg)
 })
 </script>

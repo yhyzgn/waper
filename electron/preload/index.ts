@@ -19,8 +19,8 @@ const {appendLoading} = useLoading()
 
 domReady().then(() => {
   appendLoading()
-  
+
   ipcRenderer.send('on-loading-started', {
-    msg: 'Loading started.'
+    msg: 'Loading started.',
   })
 })

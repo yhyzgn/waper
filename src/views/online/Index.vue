@@ -16,24 +16,24 @@
 
         <el-select v-model="mdlResolution" class="tag-grp-ops tag-select" placeholder="分辨率">
           <el-option
-            v-for="rls in resolutions"
-            :key="rls.code"
-            :label="rls.label"
-            :value="rls.code"/>
+              v-for="rls in resolutions"
+              :key="rls.code"
+              :label="rls.label"
+              :value="rls.code"/>
         </el-select>
 
         <el-select v-model="mdlSort" class="tag-grp-ops tag-select" placeholder="排序">
           <el-option
-            v-for="st in sorts"
-            :key="st.code"
-            :label="st.label"
-            :value="st.code"/>
+              v-for="st in sorts"
+              :key="st.code"
+              :label="st.label"
+              :value="st.code"/>
         </el-select>
 
         <el-input
-          v-model="mdlKeyword"
-          class="tag-grp-ops tag-ipt"
-          placeholder="Search...">
+            v-model="mdlKeyword"
+            class="tag-grp-ops tag-ipt"
+            placeholder="Search...">
           <template #suffix>
             <icon name="Search" class="icn-search" @click="handleSearch"/>
           </template>
@@ -46,7 +46,15 @@
 </template>
 
 <script setup>
-import {ipcRenderer} from 'electron'
+import {useSettings} from '@/store'
+
+// 加载配置文件信息
+const storeSettings = useSettings()
+
+const purityNsfw = {
+  code: 'nsfw',
+  label: 'NSFW'
+}
 
 const categories = [
   {
@@ -62,7 +70,7 @@ const categories = [
     label: '人物'
   }
 ]
-const purities = [
+const purities = ref([
   {
     code: 'sfw',
     label: 'SFW'
@@ -70,12 +78,8 @@ const purities = [
   {
     code: 'sketchy',
     label: 'Sketchy'
-  },
-  {
-    code: 'nsfw',
-    label: 'NSFW'
   }
-]
+])
 const resolutions = [
   {
     code: '0',
@@ -133,6 +137,12 @@ const sorts = [
   }
 ]
 
+const settings = storeSettings.settings
+
+if (settings && settings.apiKey) {
+  purities.value.push(purityNsfw)
+}
+
 const mdlCategory = ref([])
 const mdlPurity = ref([])
 const mdlResolution = ref('0')
@@ -141,12 +151,9 @@ const mdlKeyword = ref('')
 const total = ref(0)
 
 const handleSearch = () => {
-  ipcRenderer.send('read-settings')
+  settings.apiKey = 'fbfbhGpJ3BYj9RHMWmFtSMXvphzp2ofK'
+  storeSettings.save(settings)
 }
-
-ipcRenderer.on('on-settings-read', (e, arg) => {
-  console.log(arg)
-})
 </script>
 
 <style scoped lang="scss">
