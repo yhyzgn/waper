@@ -118,6 +118,10 @@ ipcMain.on('read-settings', (e, arg) => {
   })
 })
 
+ipcMain.on('write-settings', (e, arg) => {
+  writeSettings(arg)
+})
+
 ipcMain.on('on-loading-started', (e, arg) => {
   // 加载时检查本地配置文件是否存在，不存在则新建一个
   if (fs.existsSync(settingsPath)) {
@@ -126,11 +130,16 @@ ipcMain.on('on-loading-started', (e, arg) => {
     return
   }
 
+  writeSettings(settings)
+})
+
+const writeSettings = sets => {
   if (!fs.existsSync(appHomePath)) {
     fs.mkdirSync(appHomePath, {mode: 0o777})
   }
+
   // 说明配置文件不存在
-  fs.writeFile(settingsPath, JSON.stringify(settings), {encoding: 'utf-8', mode: 0o777}, wer => {
+  fs.writeFile(settingsPath, JSON.stringify(sets, null, 2), {encoding: 'utf-8', mode: 0o777}, wer => {
     if (wer) {
       loading.webContents.send('error', '配置文件创建出错啦')
       return
@@ -138,7 +147,7 @@ ipcMain.on('on-loading-started', (e, arg) => {
     // 显示主窗口
     showMainWindow()
   })
-})
+}
 
 app.on('window-all-closed', () => {
   loading = null
